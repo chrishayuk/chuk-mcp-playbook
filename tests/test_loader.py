@@ -10,7 +10,7 @@ from chuk_mcp_playbook.storage.factory import StorageFactory, StorageType
 
 @pytest.mark.asyncio
 async def test_load_from_directory():
-    """Test loading playbooks from directory."""
+    """Test loading playbooks from directory (recursively includes subdirectories)."""
     storage = StorageFactory.create(StorageType.MEMORY)
     service = PlaybookService(storage)
 
@@ -19,15 +19,16 @@ async def test_load_from_directory():
     project_root = test_file.parent.parent
     playbooks_dir = project_root / "playbooks"
 
-    # Load playbooks
+    # Load playbooks (now includes all subdirectories)
     count = await load_default_playbooks(service, playbooks_dir)
 
-    # Should have loaded 3 weather playbooks
-    assert count == 3
+    # Should have loaded multiple playbooks (including subdirectories like Weather/)
+    # We have weather playbooks + mermaid diagram playbooks + scenario playbooks
+    assert count >= 50, f"Expected at least 50 playbooks, got {count}"
 
     # Verify they're in storage
     stats = await service.get_stats()
-    assert stats["total_playbooks"] == 3
+    assert stats["total_playbooks"] >= 50
 
     # Verify we can query them
     results = await service.query_playbooks("sunset")
@@ -35,7 +36,7 @@ async def test_load_from_directory():
 
     # Verify titles
     titles = await service.list_playbooks()
-    assert len(titles) == 3
+    assert len(titles) >= 50
 
 
 @pytest.mark.asyncio

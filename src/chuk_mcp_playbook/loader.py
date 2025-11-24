@@ -82,9 +82,14 @@ class PlaybookLoader:
             author=author,
         )
 
-    async def load_from_directory(self, directory: Path, author: Optional[str] = None) -> int:
+    async def load_from_directory(self, directory: Path, author: Optional[str] = None, recursive: bool = True) -> int:
         """
         Load all markdown playbooks from a directory.
+
+        Args:
+            directory: Directory path to load playbooks from
+            author: Optional author name for the playbooks
+            recursive: If True, scan subdirectories recursively (default: True)
 
         Returns:
             Number of playbooks loaded
@@ -92,7 +97,9 @@ class PlaybookLoader:
         if not directory.exists():
             raise FileNotFoundError(f"Directory not found: {directory}")
 
-        markdown_files = list(directory.glob("*.md"))
+        # Use recursive glob to find all .md files in subdirectories
+        pattern = "**/*.md" if recursive else "*.md"
+        markdown_files = list(directory.glob(pattern))
         count = 0
 
         for file_path in markdown_files:
@@ -108,6 +115,9 @@ class PlaybookLoader:
 async def load_default_playbooks(service: PlaybookService, playbooks_dir: Optional[Path] = None) -> int:
     """
     Load default playbooks from the playbooks directory.
+
+    This function recursively scans the playbooks directory and all subdirectories
+    for markdown (.md) files, loading them as playbooks.
 
     Args:
         service: PlaybookService instance
@@ -131,7 +141,7 @@ async def load_default_playbooks(service: PlaybookService, playbooks_dir: Option
         return 0
 
     loader = PlaybookLoader(service)
-    count = await loader.load_from_directory(playbooks_dir, author="Chuk AI")
+    count = await loader.load_from_directory(playbooks_dir, author="Chuk AI", recursive=True)
     # Only log to stderr to avoid polluting STDIO transport
-    print(f"Loaded {count} playbooks from {playbooks_dir}", file=sys.stderr)
+    print(f"Loaded {count} playbooks from {playbooks_dir} (including subdirectories)", file=sys.stderr)
     return count
