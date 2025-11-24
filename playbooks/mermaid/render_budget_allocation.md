@@ -43,6 +43,10 @@ See [render_pie_chart.md](./render_pie_chart.md)
 
 ## Example Usage
 
+### Scenario: Annual Department Budget
+
+**User Request**: "Visualize our $1M annual budget allocation across engineering, marketing, sales, and operations departments"
+
 ```json
 {
   "nodes": [

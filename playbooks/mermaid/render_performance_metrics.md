@@ -43,6 +43,10 @@ See [render_timeline.md](./render_timeline.md)
 
 ## Example Usage
 
+### Scenario: Key Performance Metrics Dashboard
+
+**User Request**: "Visualize our key performance metrics for H1 2024 showing revenue, active users, and conversion rate trends"
+
 ```json
 {
   "x_axis": {"label": "Month", "categories": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]},

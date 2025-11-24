@@ -49,6 +49,8 @@ See [render_quadrant_chart.md](./render_quadrant_chart.md) for full details.
 
 ### Scenario: Two-Week Sprint Schedule
 
+**User Request**: "Visualize our Sprint 23 schedule showing user stories, story points, and sprint ceremonies"
+
 ```json
 {
   "title": "Sprint 23 - User Profile Enhancements",

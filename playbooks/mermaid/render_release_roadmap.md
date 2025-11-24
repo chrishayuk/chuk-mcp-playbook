@@ -54,6 +54,8 @@ See [render_xy_chart.md](./render_xy_chart.md) for full details.
 
 ### Scenario: Product Roadmap for 2024
 
+**User Request**: "Show our product roadmap for 2024 with quarterly releases and major features"
+
 ```json
 {
   "title": "Product Roadmap 2024",

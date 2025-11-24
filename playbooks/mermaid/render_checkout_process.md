@@ -50,6 +50,10 @@ See [render_state_diagram.md](./render_state_diagram.md)
 
 ## Example Usage
 
+### Scenario: E-commerce Checkout Flow
+
+**User Request**: "Visualize the complete e-commerce checkout process from cart to order confirmation, including error handling"
+
 ```json
 {
   "nodes": [

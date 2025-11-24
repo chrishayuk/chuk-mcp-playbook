@@ -42,6 +42,10 @@ See [render_pie_chart.md](./render_pie_chart.md)
 
 ## Example Usage
 
+### Scenario: Team Skill Assessment
+
+**User Request**: "Assess our development team's skills across frontend, backend, DevOps, testing, security, and architecture, comparing against required levels"
+
 ```json
 {
   "categories": ["Frontend", "Backend", "DevOps", "Testing", "Security", "Architecture"],

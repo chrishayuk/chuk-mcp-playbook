@@ -42,6 +42,10 @@ See [render_xy_chart.md](./render_xy_chart.md)
 
 ## Example Usage
 
+### Scenario: Product Feature Comparison
+
+**User Request**: "Compare our product against three competitors across key dimensions: price, features, performance, support, ease of use, and scalability"
+
 ```json
 {
   "categories": ["Price", "Features", "Performance", "Support", "Ease of Use", "Scalability"],

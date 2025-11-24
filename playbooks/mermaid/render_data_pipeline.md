@@ -47,6 +47,10 @@ See [render_sequence_diagram.md](./render_sequence_diagram.md)
 
 ## Example Usage
 
+### Scenario: ETL Data Pipeline
+
+**User Request**: "Show our data pipeline flow from CRM, web analytics, and mobile app sources through to our data warehouse and BI tools"
+
 ```json
 {
   "nodes": [

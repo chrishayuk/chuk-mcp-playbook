@@ -60,6 +60,8 @@ See [render_timeline.md](./render_timeline.md) for full details.
 
 ### Scenario: Software Development Project
 
+**User Request**: "Create a timeline for our Q1 2024 software development project showing all phases from requirements to launch"
+
 ```json
 {
   "title": "Software Development Project - Q1 2024",

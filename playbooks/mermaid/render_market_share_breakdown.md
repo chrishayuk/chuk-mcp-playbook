@@ -43,6 +43,10 @@ See [render_xy_chart.md](./render_xy_chart.md)
 
 ## Example Usage
 
+### Scenario: Cloud Provider Market Share
+
+**User Request**: "Show the 2024 cloud provider market share distribution including AWS, Azure, Google Cloud, and others"
+
 ```json
 {
   "title": "Cloud Provider Market Share 2024",

@@ -48,4 +48,4 @@ Thumbs.db
 .claude/
 
 # ignore folders
-./mermaid
+./playbooks/mermaid

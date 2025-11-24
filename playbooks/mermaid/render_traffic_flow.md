@@ -49,6 +49,10 @@ See [render_flowchart.md](./render_flowchart.md)
 
 ## Example Usage
 
+### Scenario: E-commerce User Traffic Flow
+
+**User Request**: "Show how users navigate through our e-commerce site from homepage to order confirmation, including drop-off points"
+
 ```json
 {
   "nodes": [

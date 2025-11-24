@@ -46,6 +46,10 @@ See [render_block_diagram.md](./render_block_diagram.md)
 
 ## Example Usage
 
+### Scenario: Mobile App Development Concept Map
+
+**User Request**: "Create a concept map for mobile app development covering frontend, backend, DevOps, and design aspects"
+
 ```json
 {
   "root": {
