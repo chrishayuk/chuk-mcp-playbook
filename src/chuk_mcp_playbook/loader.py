@@ -1,6 +1,7 @@
 """Utility to load playbooks from markdown files."""
 
 import asyncio
+import re
 import sys
 from pathlib import Path
 from typing import Optional
@@ -112,36 +113,141 @@ class PlaybookLoader:
         return count
 
 
+def parse_index_file(index_path: Path) -> list[str]:
+    """
+    Parse the index.md file and extract locations to ingest.
+
+    Supported formats:
+    - file:///absolute/path/to/directory
+    - github:owner/repo
+    - https://example.com/path
+
+    Args:
+        index_path: Path to the index.md file
+
+    Returns:
+        List of location strings to ingest
+    """
+    if not index_path.exists():
+        print(f"Index file not found: {index_path}", file=sys.stderr)
+        return []
+
+    content = index_path.read_text(encoding="utf-8")
+    locations = []
+
+    # Extract locations from code blocks or plain lines
+    # Match patterns like:
+    # - file:///path/to/dir
+    # - github:owner/repo
+    # - https://example.com
+
+    for line in content.split("\n"):
+        line = line.strip()
+
+        # Skip empty lines and comments
+        if not line or line.startswith("#"):
+            continue
+
+        # Match filesystem paths
+        if line.startswith("file://"):
+            locations.append(line)
+        # Match GitHub repos
+        elif line.startswith("github:"):
+            locations.append(line)
+        # Match URLs
+        elif line.startswith("http://") or line.startswith("https://"):
+            locations.append(line)
+
+    return locations
+
+
 async def load_default_playbooks(service: PlaybookService, playbooks_dir: Optional[Path] = None) -> int:
     """
-    Load default playbooks from the playbooks directory.
+    Load default playbooks from locations specified in index.md.
 
-    This function recursively scans the playbooks directory and all subdirectories
-    for markdown (.md) files, loading them as playbooks.
+    This function looks for an index.md file in the project root and loads playbooks
+    from the locations specified in it. If no index.md is found, it falls back to
+    loading from the playbooks/ directory.
+
+    Supported location formats:
+    - file:///absolute/path/to/directory - Load from filesystem
+    - github:owner/repo - Load from GitHub (not yet implemented)
+    - https://example.com/path - Load from URL (not yet implemented)
 
     Args:
         service: PlaybookService instance
-        playbooks_dir: Optional custom playbooks directory path
+        playbooks_dir: Optional custom playbooks directory path (overrides index.md)
 
     Returns:
         Number of playbooks loaded
     """
-    if playbooks_dir is None:
-        # Default to playbooks/ directory relative to project root
-        # __file__ is src/chuk_mcp_playbook/loader.py
-        # parent -> src/chuk_mcp_playbook
-        # parent.parent -> src
-        # parent.parent.parent -> project root
-        current_file = Path(__file__)
-        project_root = current_file.parent.parent.parent
+    current_file = Path(__file__)
+    project_root = current_file.parent.parent.parent
+    loader = PlaybookLoader(service)
+    total_count = 0
+
+    # If playbooks_dir is explicitly provided, use it (legacy behavior)
+    if playbooks_dir is not None:
+        if not playbooks_dir.exists():
+            print(f"Playbooks directory not found: {playbooks_dir}", file=sys.stderr)
+            return 0
+        count = await loader.load_from_directory(playbooks_dir, author="Chuk AI", recursive=True)
+        print(f"Loaded {count} playbooks from {playbooks_dir} (including subdirectories)", file=sys.stderr)
+        return count
+
+    # Look for index.md in project root
+    index_path = project_root / "index.md"
+
+    if index_path.exists():
+        print(f"Found index.md, loading playbooks from specified locations", file=sys.stderr)
+        locations = parse_index_file(index_path)
+
+        for location in locations:
+            try:
+                if location.startswith("file://"):
+                    # Extract path from file:// URL
+                    path_str = location[7:]  # Remove "file://"
+                    location_path = Path(path_str)
+
+                    if not location_path.exists():
+                        print(f"Location not found: {location}", file=sys.stderr)
+                        continue
+
+                    # Skip the index.md file itself
+                    if location_path.is_file() and location_path.name == "index.md":
+                        continue
+
+                    if location_path.is_file():
+                        await loader.load_from_file(location_path, author="Chuk AI")
+                        total_count += 1
+                    elif location_path.is_dir():
+                        count = await loader.load_from_directory(location_path, author="Chuk AI", recursive=True)
+                        total_count += count
+                        print(f"Loaded {count} playbooks from {location_path}", file=sys.stderr)
+
+                elif location.startswith("github:"):
+                    print(f"GitHub ingestion not yet implemented: {location}", file=sys.stderr)
+                    # TODO: Implement GitHub repository loading
+
+                elif location.startswith("http://") or location.startswith("https://"):
+                    print(f"URL ingestion not yet implemented: {location}", file=sys.stderr)
+                    # TODO: Implement URL-based loading
+
+            except Exception as e:
+                print(f"Error loading from {location}: {e}", file=sys.stderr)
+
+        print(f"Loaded {total_count} total playbooks from index.md locations", file=sys.stderr)
+        return total_count
+
+    else:
+        # Fallback to default playbooks directory
+        print(f"No index.md found, using default playbooks directory", file=sys.stderr)
         playbooks_dir = project_root / "playbooks"
 
-    if not playbooks_dir.exists():
-        print(f"Playbooks directory not found: {playbooks_dir}", file=sys.stderr)
-        return 0
+        if not playbooks_dir.exists():
+            print(f"Playbooks directory not found: {playbooks_dir}", file=sys.stderr)
+            return 0
 
-    loader = PlaybookLoader(service)
-    count = await loader.load_from_directory(playbooks_dir, author="Chuk AI", recursive=True)
-    # Only log to stderr to avoid polluting STDIO transport
-    print(f"Loaded {count} playbooks from {playbooks_dir} (including subdirectories)", file=sys.stderr)
-    return count
+        count = await loader.load_from_directory(playbooks_dir, author="Chuk AI", recursive=True)
+        print(f"Loaded {count} playbooks from {playbooks_dir} (including subdirectories)", file=sys.stderr)
+        return count
