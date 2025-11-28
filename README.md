@@ -206,13 +206,39 @@ Format for the final output
 
 ## Example Playbooks
 
-Three weather-related playbooks are included:
+### Weather Playbooks
 
-1. **Get Sunset and Sunrise Times**: Retrieve sunrise/sunset for a location
-2. **Get Weather Forecast**: Multi-day weather forecast
-3. **Get Current Weather Conditions**: Real-time weather data
+Using the `chuk-mcp-open-meteo` server:
 
-All use the `chuk-mcp-open-meteo` server.
+1. **Get Current Weather Conditions**: Real-time weather data for any location
+2. **Get Weather Forecast**: Multi-day weather forecast with detailed metrics
+3. **Compare Historical Weather**: Compare weather conditions across different time periods
+4. **Compare Recurring Date Weather**: Analyze weather patterns for recurring dates (birthdays, holidays)
+5. **Plan Multi-Day Trip Weather**: Weather planning for trips spanning multiple days
+
+### Time Playbooks
+
+Using the `chuk-mcp-time` server:
+
+**Basic Tool Playbooks:**
+1. **Get Current UTC Time**: High-accuracy UTC time using NTP consensus
+2. **Get Time for Timezone**: Current time for any IANA timezone with DST info
+3. **Check System Clock Drift**: Detect and diagnose clock synchronization issues
+4. **Convert Time Across Timezones**: Display current time across multiple timezones simultaneously
+5. **Convert Time Between Timezones**: Convert specific datetimes between any two timezones
+6. **List Available Timezones**: Search and discover valid IANA timezone identifiers
+7. **Get Timezone DST Info**: View DST schedule and upcoming transitions for any timezone
+
+**Simple Question Scenarios:**
+8. **What's the Time in [City]?**: Answer "What time is it in London/Tokyo/etc?"
+9. **When Do Clocks Change?**: Answer "When does DST start/end in [location]?"
+10. **Is Location in DST?**: Answer "Is Sydney/New York/etc in daylight saving time?"
+11. **What Timezone is City?**: Answer "What timezone is Phoenix/Mumbai/etc in?"
+
+**Complex Scenarios:**
+12. **Schedule Global Meeting**: Find optimal meeting times across multiple timezones
+13. **Troubleshoot Time Sync Issues**: Diagnose and fix time synchronization problems
+14. **Plan Around DST Transitions**: Handle DST changes in scheduling and deployments
 
 ## Integration with AI Planner
 
